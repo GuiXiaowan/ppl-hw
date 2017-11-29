@@ -1,5 +1,5 @@
 package MUA;
-
+//表达式外面有一对括号
 /*
  * MUA编辑器第二阶段
  * 姓名：桂晓琬
@@ -59,26 +59,50 @@ class Reader{
 			if(instr.length()>=2 && instr.charAt(1)=='/') {
 				return null;
 			}
+		
+		case 'p':
+			//打印输出
+			if(instr.equals("print")) {
+				return print(input.nextLine());
+			}
+			else if(instr.length()>=6 && instr.substring(0,6).equals("print ")) {
+				//System.out.println(instr.substring(6));
+				return print(instr.substring(6));
+			}
+			//else return null;
+			//break;
 		//m打头的三种操作
 		case 'm'://make mod mul  
 			//进行make操作
-			if(instr.length()>=5 && instr.substring(0,5).equals("make ")) {
+			if(instr.equals("make")) {
+				return make(input.nextLine());
+			}
+			else if(instr.length()>=5 && instr.substring(0,5).equals("make ")) {
 				//MUA.wordlist[MUA.point]=new Word();
 				//MUA.wordlist[MUA.point]=make(instr.substring(5));
 				//MUA.point++;
 				return make(instr.substring(5));
 			}
 			//进行mod操作
+			else if(instr.equals("mod")) {
+				return mod(input.nextLine());
+			}
 			else if(instr.length()>=4 && instr.substring(0,4).equals("mod ")) {
 				return mod(instr.substring(4));
 			}
 			//进行乘法操作
+			else if(instr.equals("mul")) {
+				return mul(input.nextLine());
+			}
 			else if(instr.length()>=4 && instr.substring(0,4).equals("mul ")) {
 				return mul(instr.substring(4));
 			}
 		case 't':
 			//进行thing取数操作
-			if(instr.length()>=6 &&instr.substring(0,6).equals("thing ")) {
+			if(instr.equals("thing")) {
+				return thing(input.nextLine());
+			}
+			else if(instr.length()>=6 &&instr.substring(0,6).equals("thing ")) {
 				if(instr.charAt(6)!='"') {return thing(instr.substring(6));}
 				else {return thing(instr.substring(7));}
 			}
@@ -86,12 +110,19 @@ class Reader{
 			//break;
 		case ':':
 			//进行：取数操作
+			//System.out.println(instr);
 			return thing(instr.substring(1));
 			//break;
 		case 'e'://erase
 			//进行消除操作
-			if(instr.length()>=6 && instr.substring(0,6).equals("erase ")) {
+			if(instr.equals("erase")) {
+				return erase(input.nextLine());
+			}
+			else if(instr.length()>=6 && instr.substring(0,6).equals("erase ")) {
 				return erase(instr.substring(6));
+			}
+			else if(instr.equals("eq")) {
+				return eq(input.nextLine());
 			}
 			else if(instr.length()>=3 && instr.substring(0,3).equals("eq "))//eq
 			{
@@ -101,15 +132,11 @@ class Reader{
 			//break;
 		case 'i':
 			//查找是否有该名字的变量存在
-			if(instr.length()>=7 && instr.substring(0,7).equals("isname ")) {
-				return isname(instr.substring(7));
+			if(instr.equals("isname")) {
+				return isname(input.nextLine());
 			}
-			//else return null;
-			//break;
-		case 'p':
-			//打印输出
-			if(instr.length()>=6 && instr.substring(0,6).equals("print ")) {
-				print(instr.substring(6));
+			else if(instr.length()>=7 && instr.substring(0,7).equals("isname ")) {
+				return isname(instr.substring(7));
 			}
 			//else return null;
 			//break;
@@ -125,10 +152,16 @@ class Reader{
 			
 		case 'a'://add
 			//加法
-			if(instr.length()>=4 && instr.substring(0,4).equals("add ")) {
+			if(instr.equals("add")) {
+				return add(input.nextLine());
+			}
+			else if(instr.length()>=4 && instr.substring(0,4).equals("add ")) {
 				return add(instr.substring(4));
 			}
 			//and操作
+			else if(instr.equals("and")) {
+				return and(input.nextLine());
+			}
 			else if(instr.length()>=4 && instr.substring(0,4).equals("and "))
 			{
 				return and(instr.substring(4));
@@ -136,46 +169,71 @@ class Reader{
 			//else return null;
 			//break;
 		case 's'://sub
-			if(instr.length()>=4 && instr.substring(0,4).equals("sub ")) {
+			if(instr.equals("sub")) {
+				return sub(input.nextLine());
+			}
+			else if(instr.length()>=4 && instr.substring(0,4).equals("sub ")) {
 				return sub(instr.substring(4));
 			}
 			//break;
 		case 'd'://div
 			//除法取整
-			if(instr.length()>=4 && instr.substring(0,4).equals("div ")) {
+			if(instr.equals("div")) {
+				return div(input.nextLine());
+			}
+			else if(instr.length()>=4 && instr.substring(0,4).equals("div ")) {
 				return div(instr.substring(4));
 			}
 			//break;
 		case 'g'://gt
 			//比较大
-			if(instr.length()>=3 && instr.substring(0,3).equals("gt ")) {
+			if(instr.equals("gt")) {
+				return gt(input.nextLine());
+			}
+			else if(instr.length()>=3 && instr.substring(0,3).equals("gt ")) {
 				return gt(instr.substring(3));
 			}
 			//break;
 		case 'l'://lt
 			//比较小
-			if(instr.length()>=3 && instr.substring(0,3).equals("lt ")) {
+			if(instr.equals("lt")) {
+				return lt(input.nextLine());
+			}
+			else if(instr.length()>=3 && instr.substring(0,3).equals("lt ")) {
 				return lt(instr.substring(3));
 			}
 			//break;
 		case 'o'://or
 			//或操作
-			if(instr.length()>=3 && instr.substring(0,3).equals("or ")) {
+			if(instr.equals("or")) {
+				return or(input.nextLine());
+			}
+			else if(instr.length()>=3 && instr.substring(0,3).equals("or ")) {
 				return or(instr.substring(3));
 			}
 			//break;
 		case 'n'://not
 			//非操作
-			if(instr.length()>=4 && instr.substring(0,4).equals("not ")) {
+			if(instr.equals("not")) {
+				return not(input.nextLine());
+			}
+			else if(instr.length()>=4 && instr.substring(0,4).equals("not ")) {
 				return not(instr.substring(4));
 			}
 			//break;
+		case '[':
+			if(instr.indexOf(']')>0) {
+				
+			}
+			else {
+				
+			}
 		default:
 			//返回值
 			//单词的字面量
 			if(instr.charAt(0)=='"') return instr.substring(1);
 			//list的字面量 特别的 如果list后面还有内容会被忽略掉……
-			else if(instr.charAt(0)=='[') return explainer(instr.substring(1,instr.indexOf(']')));
+			//else if(instr.charAt(0)=='[') return explainer(instr.substring(1,instr.indexOf(']')));
 			//普通的东西
 			else return instr;
 		}
@@ -495,6 +553,7 @@ class Reader{
 	private String thing(String instr) {
 		//获得待取的name
 		String str0=explainer(instr);
+		//System.out.println(str0);
 		//在命名空间里查找这个name
 		if(str0.indexOf(' ')<0) {
 			for(int i=0;i<=MUA.point;i++) {
@@ -547,8 +606,9 @@ class Reader{
 		else return "false"+instr.substring(instr.indexOf(' '));
 	}
 	//print打印 不知道的都丢给解释器
-	private void print(String instr) {
+	private String print(String instr) {
 		System.out.println(explainer(instr));
+		return null;
 	}
 	private String read() {
 		
