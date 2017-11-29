@@ -53,6 +53,7 @@ class Reader{
 		explainer(instr);
 	}
 	private String explainer(String instr) {
+		//System.out.println((instr));
 		switch(instr.charAt(0)) {
 		//进行注释消解
 		case '/':
@@ -111,7 +112,7 @@ class Reader{
 		case ':':
 			//进行：取数操作
 			//System.out.println(instr);
-			return thing(instr.substring(1));
+			if(instr.charAt(0)==':') return thing(instr.substring(1));
 			//break;
 		case 'e'://erase
 			//进行消除操作
@@ -244,10 +245,18 @@ class Reader{
 		int flag1,flag2;
 		//第一次explainer找到第一个数
 		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
-		flag1=Integer.parseInt(str1);
+		if(str0.indexOf(' ')>0) {
+			String str1=str0.substring(0,str0.indexOf(' '));
+			flag1=Integer.parseInt(str1);
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			String str1=str0;
+			flag1=Integer.parseInt(str1);
+			str0=input.nextLine();
+		}
 		//把第一个数去掉，接下来的部分再次explain 找到第二个乘数
-		String str2=explainer(str0.substring(str0.indexOf(' ')+1));
+		String str2=explainer(str0);	
 		//如果第二个乘数后面没有内容，直接返回结果
 		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
 		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
@@ -261,10 +270,18 @@ class Reader{
 		int flag1,flag2;
 		//第一次explainer找到被除数
 		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
-		flag1=Integer.parseInt(str1);
+		if(str0.indexOf(' ')>0) {
+			String str1=str0.substring(0,str0.indexOf(' '));
+			flag1=Integer.parseInt(str1);
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			String str1=str0;
+			flag1=Integer.parseInt(str1);
+			str0=input.nextLine();
+		}
 		//把第一个数去掉，接下来的部分再次explain 找到除数
-		String str2=explainer(str0.substring(str0.indexOf(' ')+1));
+		String str2=explainer(str0);
 		//如果除数后面没有内容，直接返回结果
 		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
 		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
@@ -272,28 +289,153 @@ class Reader{
 		if(str2.indexOf(' ')>0) return String.valueOf(flag1%flag2)+str2.substring(str2.indexOf(' '));
 		return String.valueOf(flag1%flag2);
 	}
+	//div除法取整操作
+	private String div(String instr) {
+		//flag1 和 flag2 分别表示除数和被除数
+		int flag1,flag2;
+		String str0=explainer(instr);
+		if(str0.indexOf(' ')>0) {
+			String str1=str0.substring(0,str0.indexOf(' '));
+			flag1=Integer.parseInt(str1);
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			String str1=str0;
+			flag1=Integer.parseInt(str1);
+			str0=input.nextLine();
+		}
+		//把第一个数去掉，接下来的部分再次explain 找到除数
+		String str2=explainer(str0);
+		//如果除数后面没有内容，直接返回结果
+		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
+		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
+		//如果除数后面没有内容，直接返回结果
+		if(str2.indexOf(' ')>0) return String.valueOf(flag1/flag2)+str2.substring(str2.indexOf(' '));
+		return String.valueOf(flag1/flag2);
+	}
+	//add加法操作 基本思路同其他四则运算操作
+	private String add(String instr) {
+		int flag1,flag2;
+		String str0=explainer(instr);
+		if(str0.indexOf(' ')>0) {
+			String str1=str0.substring(0,str0.indexOf(' '));
+			flag1=Integer.parseInt(str1);
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			String str1=str0;
+			flag1=Integer.parseInt(str1);
+			str0=input.nextLine();
+		}
+		String str2=explainer(str0);
+		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
+		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
+		if(str2.indexOf(' ')>0) return String.valueOf(flag1+flag2)+str2.substring(str2.indexOf(' '));
+		return String.valueOf(flag1+flag2);
+	}
+	//sub减法操作 基本同其他四则运算操作
+	private String sub(String instr) {
+		int flag1,flag2;
+		String str0=explainer(instr);
+		if(str0.indexOf(' ')>0) {
+			String str1=str0.substring(0,str0.indexOf(' '));
+			flag1=Integer.parseInt(str1);
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			String str1=str0;
+			flag1=Integer.parseInt(str1);
+			str0=input.nextLine();
+		}
+		String str2=explainer(str0);
+		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
+		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
+		if(str2.indexOf(' ')>0) return String.valueOf(flag1-flag2)+str2.substring(str2.indexOf(' '));
+		return String.valueOf(flag1-flag2);
+	}
 	//非操作
 	private String not(String instr) {
 		//explain找到内容的true或false
 		String str1=explainer(instr);
+		//System.out.println(str1);
 		//如果是true
-		if(str1.length()>=3 && str1.charAt(0)=='t' && str1.charAt(1)=='r' && str1.charAt(2)=='u' && str1.charAt(3)=='e') {
-			//如果变量后面还有内容则拼接
-			if(str1.indexOf(' ')>0) {
-				return "false"+str1.substring(str1.indexOf(' '));
-			}
-			//如果变量后面没有内容则直接返回
-			else return "false";
+		//如果变量后面没有内容则直接返回
+		if(str1.equals("true")) {
+			return "false";
 		}
-		//如果是false
-		else if(str1.length()>=4 && str1.charAt(0)=='f' && str1.charAt(1)=='a' && str1.charAt(2)=='l' && str1.charAt(3)=='s'&& str1.charAt(4)=='e') {
-			if(str1.indexOf(' ')>0) {
-				return "true"+str1.substring(str1.indexOf(' '));
-			}
-			else return "true";
+		else if(str1.length()>=5 && str1.substring(0,5).equals("true ")) {
+			//如果变量后面还有内容则拼接
+			return "false"+str1.substring(str1.indexOf(' '));
+		}
+		//如果是true
+		//如果变量后面没有内容则直接返回
+		else if(str1.equals("false")) {
+			return "true";
+		}
+		else if(str1.length()>=5 && str1.substring(0,5).equals("true ")) {
+		//如果变量后面还有内容则拼接
+			return "true"+str1.substring(str1.indexOf(' '));
 		}
 		else{
 			return "value is not bool";
+		}
+	}
+	//and和操作 基本同其他逻辑操作
+	private String and(String instr) {
+		int flag1,flag2;
+		String str1=explainer(instr);//System.out.println("***");
+		//System.out.println(str1);
+		if(str1.equals("true")) {
+			flag1=1;
+		}
+		else if(str1.length()>=5 && str1.substring(0,5).equals("true ")) {
+			flag1=1;
+		}
+		else if(str1.equals("false")) {
+			flag1=0;
+		}
+		else if(str1.length()>=6 && str1.substring(0,5).equals("false ")) {
+			flag1=0;
+		}
+		else{
+			return "value1 is not bool";
+		}
+		if(str1.indexOf(' ')>0) {
+			str1 = str1.substring(str1.indexOf(' ')+1);
+		}
+		else {
+			str1=input.nextLine();
+		}
+		
+		String str2=explainer(str1);
+		//System.out.println(str2);
+		if(str2.equals("true")) {
+			flag2=1;
+		}
+		else if(str2.length()>=5 && str2.substring(0,5).equals("true ")) {
+			flag2=1;
+		}
+		else if(str2.equals("false")) {
+			flag2=0;
+		}
+		else if(str2.length()>=6 && str2.substring(0,5).equals("false ")) {
+			flag2=0;
+		}
+		else{
+			return "value2 is not bool";
+		}
+		//and操作需要两个变量均为true才会为true
+		if(flag1*flag2==1) {
+			if(str2.indexOf(' ')>0) {
+				return "true"+str2.substring(str2.indexOf(' '));
+			}
+			else return "true";
+		}
+		else {
+			if(str2.indexOf(' ')>0) {
+				return "false"+str2.substring(str2.indexOf(' '));
+			}
+			else return "false";
 		}
 	}
 	//或操作
@@ -301,27 +443,45 @@ class Reader{
 		int flag1,flag2;
 		//explain找到第一个bool变量
 		String str1=explainer(instr);
-		//如果是true
-		if(str1.length()>=3 && str1.charAt(0)=='t' && str1.charAt(1)=='r' && str1.charAt(2)=='u' && str1.charAt(3)=='e') {
+		//第一个变量 如果是true
+		if(str1.equals("true")) {
 			flag1=1;
 		}
-		//如果是false
-		else if(str1.length()>=4 && str1.charAt(0)=='f' && str1.charAt(1)=='a' && str1.charAt(2)=='l' && str1.charAt(3)=='s'&& str1.charAt(4)=='e') {
+		else if(str1.length()>=5 && str1.substring(0,5).equals("true ")) {
+			flag1=1;
+		}
+		//第一个变量 如果是false
+		else if(str1.equals("false")) {
 			flag1=0;
 		}
-		//如果是奇怪的东西
+		else if(str1.length()>=6 && str1.substring(0,5).equals("false ")) {
+			flag1=0;
+		}
 		else{
 			return "value1 is not bool";
 		}
-		//explain出第二个变量内容
-		String str2=explainer(str1.substring(str1.indexOf(' ')+1));
-		if(str2.length()>=3 && str2.charAt(0)=='t' && str2.charAt(1)=='r' && str2.charAt(2)=='u' && str2.charAt(3)=='e') {
-			flag2=1;
-		}
-		else if(str2.length()>=4 && str2.charAt(0)=='f' && str2.charAt(1)=='a' && str2.charAt(2)=='l' && str2.charAt(3)=='s'&& str2.charAt(4)=='e') {
-			flag2=0;
+		if(str1.indexOf(' ')>0) {
+			str1 = str1.substring(str1.indexOf(' ')+1);
 		}
 		else {
+			str1=input.nextLine();
+		}
+		String str2=explainer(str1);
+		//第二个变量 如果是true
+		if(str2.equals("true")) {
+			flag2=1;
+		}
+		else if(str2.length()>=5 && str2.substring(0,5).equals("true ")) {
+			flag2=1;
+		}
+		//第二个变量 如果是false
+		else if(str2.equals("false")) {
+			flag2=0;
+		}
+		else if(str2.length()>=6 && str2.substring(0,5).equals("false ")) {
+			flag2=0;
+		}
+		else{
 			return "value2 is not bool";
 		}
 		//因为是or操作 只要两者有一个为真即可
@@ -344,11 +504,19 @@ class Reader{
 		int flag1,flag2;
 		//找到第一个变量
 		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
+		String str1=null;
+		if(str0.indexOf(' ')>0) {
+			str1=str0.substring(0,str0.indexOf(' '));
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			str1=str0;
+			str0=input.nextLine();
+		}
 		//判断第一个变量是否为数字，如果不是数字则按照字符串的规则进行比较
 		if(!Character.isDigit(str1.charAt(0))) {
 			//找到第二个变量
-			String str2=explainer(str0.substring(str0.indexOf(' ')+1));
+			String str2=explainer(str0);
 			if(str2.indexOf(' ')<0) {
 				if(str1.compareTo(str2)<0) return "true";
 				else return "false";
@@ -363,7 +531,7 @@ class Reader{
 		//但是如果第一个是数字第二个不是，则会出现错误情况
 		else {
 			flag1=Integer.parseInt(str1);
-			String str2=explainer(str0.substring(str0.indexOf(' ')+1));
+			String str2=explainer(str0);
 			if(str2.indexOf(' ')<0) {
 				//把字符串直接转换成数字
 				flag2=Integer.parseInt(str2);
@@ -383,9 +551,17 @@ class Reader{
 		int flag1,flag2;
 		
 		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
+		String str1=null;
+		if(str0.indexOf(' ')>0) {
+			str1=str0.substring(0,str0.indexOf(' '));
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			str1=str0;
+			str0=input.nextLine();
+		}
 		if(!Character.isDigit(str1.charAt(0))) {
-			String str2=explainer(str0.substring(str0.indexOf(' ')+1));
+			String str2=explainer(str0);
 			if(str2.indexOf(' ')<0) {
 				if(str1.compareTo(str2)>0) return "true";
 				else return "false";
@@ -397,7 +573,7 @@ class Reader{
 		}
 		else {
 			flag1=Integer.parseInt(str1);
-			String str2=explainer(str0.substring(str0.indexOf(' ')+1));
+			String str2=explainer(str0);
 			if(str2.indexOf(' ')<0) {
 				flag2=Integer.parseInt(str2);
 				if(flag1>flag2) return "true";
@@ -411,88 +587,19 @@ class Reader{
 		}
 		
 	}
-	//div除法取整操作
-	private String div(String instr) {
-		//flag1 和 flag2 分别表示除数和被除数
-		int flag1,flag2;
-		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
-		flag1=Integer.parseInt(str1);
-		//把第一个数去掉，接下来的部分再次explain 找到除数
-		String str2=explainer(str0.substring(str0.indexOf(' ')+1));
-		//如果除数后面没有内容，直接返回结果
-		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
-		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
-		//如果除数后面没有内容，直接返回结果
-		if(str2.indexOf(' ')>0) return String.valueOf(flag1/flag2)+str2.substring(str2.indexOf(' '));
-		return String.valueOf(flag1/flag2);
-	}
-	//sub减法操作 基本同其他四则运算操作
-	private String sub(String instr) {
-		int flag1,flag2;
-		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
-		flag1=Integer.parseInt(str1);
-		String str2=explainer(str0.substring(str0.indexOf(' ')+1));
-		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
-		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
-		if(str2.indexOf(' ')>0) return String.valueOf(flag1-flag2)+str2.substring(str2.indexOf(' '));
-		return String.valueOf(flag1-flag2);
-	}
-	//and和操作 基本同其他逻辑操作
-	private String and(String instr) {
-		int flag1,flag2;
-		String str1=explainer(instr);
-		if(str1.length()>=3 && str1.charAt(0)=='t' && str1.charAt(1)=='r' && str1.charAt(2)=='u' && str1.charAt(3)=='e') {
-			flag1=1;
-		}
-		else if(str1.length()>=4 && str1.charAt(0)=='f' && str1.charAt(1)=='a' && str1.charAt(2)=='l' && str1.charAt(3)=='s'&& str1.charAt(4)=='e') {
-			flag1=0;
-		}
-		else{
-			return "value1 is not bool";
-		}
-		String str2=explainer(str1.substring(str1.indexOf(' ')+1));
-		if(str2.length()>=3 && str2.charAt(0)=='t' && str2.charAt(1)=='r' && str2.charAt(2)=='u' && str2.charAt(3)=='e') {
-			flag2=1;
-		}
-		else if(str2.length()>=4 && str2.charAt(0)=='f' && str2.charAt(1)=='a' && str2.charAt(2)=='l' && str2.charAt(3)=='s'&& str2.charAt(4)=='e') {
-			flag2=0;
-		}
-		else {
-			return "value2 is not bool";
-		}
-		//and操作需要两个变量均为true才会为true
-		if(flag1*flag2==1) {
-			if(str2.indexOf(' ')>0) {
-				return "true"+str2.substring(str2.indexOf(' '));
-			}
-			else return "true";
-		}
-		else {
-			if(str2.indexOf(' ')>0) {
-				return "false"+str2.substring(str2.indexOf(' '));
-			}
-			else return "false";
-		}
-	}
-	//add加法操作 基本思路同其他四则运算操作
-	private String add(String instr) {
-		int flag1,flag2;
-		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
-		flag1=Integer.parseInt(str1);
-		String str2=explainer(str0.substring(str0.indexOf(' ')+1));
-		if(str2.indexOf(' ')<0) flag2=Integer.parseInt(str2);
-		else flag2=Integer.parseInt(str2.substring(0,str2.indexOf(' ')));
-		if(str2.indexOf(' ')>0) return String.valueOf(flag1+flag2)+str2.substring(str2.indexOf(' '));
-		return String.valueOf(flag1+flag2);
-	}
 	//eq equle等于操作
 	private String eq(String instr) {
 		String str0=explainer(instr);
-		String str1=str0.substring(0,str0.indexOf(' '));
-		String str2=explainer(str0.substring(str0.indexOf(' ')+1));
+		String str1=null;
+		if(str0.indexOf(' ')>0) {
+			str1=str0.substring(0,str0.indexOf(' '));
+			str0=str0.substring(str0.indexOf(' ')+1);
+		}
+		else {
+			str1=str0;
+			str0=input.nextLine();
+		}
+		String str2=explainer(str0);
 		//找出待分别的两个变量 str1 和 str2的前半部分 直接按照字符串比较方法比较是否相等
 		if(str2.indexOf(' ')>0) {
 			if(str1.equals(str2.substring(0,str2.indexOf(' ')))) {
@@ -521,27 +628,35 @@ class Reader{
 		//创建一个新的word变量
 		Word newword = new Word();
 		//名字为第一个部分的字面量
-		newword.name=instr.substring(instr.indexOf('"')+1,instr.indexOf(' '));
+		if(instr.indexOf(' ')>0) {
+			newword.name=instr.substring(instr.indexOf('"')+1,instr.indexOf(' '));
+			instr=instr.substring(instr.indexOf(' ')+1);
+		}
+		else {
+			newword.name=instr.substring(instr.indexOf('"')+1);
+			instr=input.nextLine();
+		}
+		//instr=explainer(instr);
 		//判断该名字是否存在于命名空间，用到isname函数进行判断
 		//如果还没有存在，则进行创建一个新的word 并把它放到命名空间里
-		if(isname(instr.substring(instr.indexOf('"'),instr.indexOf(' ')))=="false") {
+		if(isname("\""+newword.name)=="false") {
 			//只要不是read和readlist 后面的内容都可以直接和name绑定
 			//如果是read 则调用read 把返回内容赋值给name
-			if(instr.substring(instr.indexOf(' ')+1).length()>=4 && instr.charAt(instr.indexOf(' ')+1)=='r' && instr.charAt(instr.indexOf(' ')+2)=='e' && instr.charAt(instr.indexOf(' ')+3)=='a' && instr.charAt(instr.indexOf(' ')+4)=='d') {
-				newword.value=explainer(instr.substring(instr.indexOf(' ')+1));
+			if(instr.length()>=4 && instr.equals("read")) {
+				newword.value=explainer(instr);
 			}
-			else newword.value=instr.substring(instr.indexOf(' ')+1);
+			else newword.value=instr;
 			MUA.wordlist[MUA.point++]=newword;
 			return newword.value;
 		}
 		else {
 			//如果是已经存在于命名空间的name 则需要先找到这个name 重新绑定value
 			for(int i=0;i<=MUA.point-1;i++) {
-				if(MUA.wordlist[i].name.equals(instr.substring(instr.indexOf('"')+1,instr.indexOf(' ')))&&MUA.wordlist[i].value!=null) {
-					if(instr.substring(instr.indexOf(' ')+1).length()>=4 && instr.charAt(instr.indexOf(' ')+1)=='r' && instr.charAt(instr.indexOf(' ')+2)=='e' && instr.charAt(instr.indexOf(' ')+3)=='a' && instr.charAt(instr.indexOf(' ')+4)=='d') {
-						MUA.wordlist[i].value=explainer(instr.substring(instr.indexOf(' ')+1));
+				if(MUA.wordlist[i].name.equals(newword.name)&&MUA.wordlist[i].value!=null) {
+					if(instr.length()>=4 && instr.equals("read")) {
+						MUA.wordlist[i].value=explainer(instr);
 					}
-					else MUA.wordlist[i].value=instr.substring(instr.indexOf(' ')+1);
+					else MUA.wordlist[i].value=instr;
 					return null;
 				}
 			}
@@ -566,6 +681,7 @@ class Reader{
 			//如果后面还有内容 则把附加的东西也放上去
 			for(int i=0;i<=MUA.point;i++) {
 				if(MUA.wordlist[i].name.equals(str0.substring(0,str0.indexOf(' ')))) {
+					//System.out.println(MUA.wordlist[i].value+str0.substring(str0.indexOf(' ')));
 					return explainer(MUA.wordlist[i].value+str0.substring(str0.indexOf(' ')));
 				}
 			}
@@ -607,21 +723,20 @@ class Reader{
 	}
 	//print打印 不知道的都丢给解释器
 	private String print(String instr) {
-		System.out.println(explainer(instr));
+		//System.out.println(instr);
+		String str0=explainer(instr);
+		System.out.println(str0);
 		return null;
 	}
 	private String read() {
-		
 		String readword = input.next();
 		input.nextLine();
 		return readword;
-		
 	}
 	private String readlist() {
 		String readalist = input.nextLine();
 		return readalist;
 	}
-	
 }
 
 /*test
