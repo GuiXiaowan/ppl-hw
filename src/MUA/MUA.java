@@ -60,7 +60,6 @@ class Reader{
 			if(instr.length()>=2 && instr.charAt(1)=='/') {
 				return null;
 			}
-		
 		case 'p':
 			//打印输出
 			if(instr.equals("print")) {
@@ -176,6 +175,12 @@ class Reader{
 			else if(instr.length()>=4 && instr.substring(0,4).equals("sub ")) {
 				return sub(instr.substring(4));
 			}
+			else if(instr.equals("stop")) {
+				return null;
+			}
+			else if(instr.length()>=5 && instr.substring(0,5).equals("stop ")) {
+				return null;
+			}
 			//break;
 		case 'd'://div
 			//除法取整
@@ -212,6 +217,12 @@ class Reader{
 			else if(instr.length()>=3 && instr.substring(0,3).equals("or ")) {
 				return or(instr.substring(3));
 			}
+			else if(instr.equals("output")) {
+				return explainer(input.nextLine());
+			}
+			else if(instr.length()>=7 && instr.substring(0,7).equals("output ")) {
+				return explainer(instr.substring(7));
+			}
 			//break;
 		case 'n'://not
 			//非操作
@@ -223,21 +234,203 @@ class Reader{
 			}
 			//break;
 		case '[':
-			if(instr.indexOf(']')>0) {
-				
+			int count=1;
+			int p=0;
+			//int pr=0;
+			//计数所有的左括号 遇到左括号+1 右括号-1 直到count为0表示
+			while(count!=0) {
+				p++;
+				if(instr.charAt(p)=='[') {
+					count++;
+				}
+				else if(instr.charAt(p)==']')  {
+					count--;
+				}
+				else {
+					instr+=" ";
+					instr+=input.nextLine();
+				}
+			}
+			if(instr.length()>(p+1))	instr=instr.substring(1,p)+instr.substring(p+1);
+			else instr=instr.substring(1,p);
+			return instr;
+		case '（':
+			count=1;
+			p=0;
+			//int pr=0;
+			//计数所有的左括号 遇到左括号+1 右括号-1 直到count为0表示
+			while(count!=0) {
+				p++;
+				if(instr.charAt(p)=='（') {
+					count++;
+				}
+				else if(instr.charAt(p)=='）')  {
+					count--;
+				}
+				else {
+					instr+=" ";
+					instr+=input.nextLine();
+				}
+			}
+			if(instr.length()>(p+1))	instr=instr.substring(1,p)+instr.substring(p+1);
+			else instr=instr.substring(1,p);
+			return instr;
+		default:
+			//先去函数列表找是否有相应的操作
+			String str0=null;
+			//String funname=null;
+			if(instr.indexOf(' ')>0) {
+				str0=isname(instr.substring(instr.indexOf(' ')));
+				//instr=instr.substring(instr.indexOf(' ')+1);
 			}
 			else {
-				
+				str0=isname(instr);
+				//instr=input.nextLine();
 			}
-		default:
-			//返回值
-			//单词的字面量
-			if(instr.charAt(0)=='"') return instr.substring(1);
-			//list的字面量 特别的 如果list后面还有内容会被忽略掉……
-			//else if(instr.charAt(0)=='[') return explainer(instr.substring(1,instr.indexOf(']')));
-			//普通的东西
-			else return instr;
+			//若函数存在
+			if(str0.substring(0,4).equals("true")) {
+				return funop(instr);
+			}
+			//若函数不存在
+			else {
+				//是否存在运算符+-*/
+				
+				//返回值
+				//单词的字面量
+				if(instr.charAt(0)=='"') return instr.substring(1);
+				//list的字面量 特别的 如果list后面还有内容会被忽略掉……
+				//else if(instr.charAt(0)=='[') return explainer(instr.substring(1,instr.indexOf(']')));
+				//普通的东西
+				else return instr;
+			}
 		}
+	}
+	/*String funcexp(String instr, Word[] funcp){
+		switch(instr.charAt(0)) {
+		//进行注释消解
+		case 'o'://output
+			if(instr.equals("output")) {
+				//接受返回的值
+				return print(input.nextLine());
+			}
+			else if(instr.length()>=7 && instr.substring(0,7).equals("output ")) {
+				//System.out.println(instr.substring(6));
+				//return print(instr.substring(6));
+			}
+		case 's'://stop
+			//打印输出
+			if(instr.equals("stop")) {
+				return print(input.nextLine());
+			}
+			else if(instr.length()>=5 && instr.substring(0,5).equals("stop ")) {
+				//System.out.println(instr.substring(6));
+				return print(instr.substring(5));
+			}
+		case 't'://thing函数空间
+			//进行thing取数操作
+			if(instr.equals("thing")) {
+				return functhing(input.nextLine());
+			}
+			else if(instr.length()>=6 &&instr.substring(0,6).equals("thing ")) {
+				if(instr.charAt(6)!='"') {return functhing(instr.substring(6));}
+				else {return functhing(instr.substring(7));}
+			}
+		case ':'://thing函数空间
+			//进行：取数操作
+			//System.out.println(instr);
+			if(instr.charAt(0)==':') return functhing(instr.substring(1));
+		
+		}
+	}*/
+	private String funop(String instr) {
+		String funname=null;
+		//String result=null;
+		if(instr.indexOf(' ')>0) {
+			funname=instr.substring(instr.indexOf(' '));
+		}
+		else {
+			funname=instr;
+			instr=input.nextLine();
+		}
+		String str0=thing(funname);
+		String namelist=null;
+		String oplist=null;
+		//抽离namelist 和 oplist
+		int count=1;
+		int p=0;
+		//计数所有的左括号 遇到左括号+1 右括号-1 直到count为0表示
+		while(count!=0) {
+			p++;
+			if(str0.charAt(p)=='[') {
+				count++;
+			}
+			else if(str0.charAt(p)==']')  {
+				count--;
+			}
+			else {
+				System.out.println("Error!");
+			}
+		}
+		namelist=str0.substring(1,p);
+		count=1;
+		int p0=p;
+		p+=1;
+		while(count!=0) {
+			p++;
+			if(str0.charAt(p)=='[') {
+				count++;
+			}
+			else if(str0.charAt(p)==']')  {
+				count--;
+			}
+			else {
+				System.out.println("Error!");
+			}
+		}
+		oplist=str0.substring(p0+2,p);
+		//参数和运算分离完毕
+		//创建函数自己的命名空间
+		Word[] funcwordlist=new Word[256];
+		int point=0;
+		while(namelist.charAt(' ')>0) {
+			//给参数记录名称 名称来自于定义时
+			funcwordlist[point].name=namelist.substring(0,namelist.indexOf(' '));
+			namelist=namelist.substring(namelist.indexOf(' ')+1);
+			//给参数记录初始值 值来自于调用输入
+			if(instr.indexOf(' ')>0) {
+				funcwordlist[point].value=explainer(instr.substring(0,instr.indexOf(' ')));
+				instr=instr.substring(instr.indexOf(' ')+1);
+			}
+			else {
+				funcwordlist[point].value=explainer(instr);
+				instr=input.nextLine();
+			}
+			point++;
+		}
+		funcwordlist[point].name=namelist;
+		if(instr.indexOf(' ')>0) {
+			funcwordlist[point].value=explainer(instr.substring(0,instr.indexOf(' ')));
+			instr=instr.substring(instr.indexOf(' ')+1);
+		}
+		else {
+			funcwordlist[point].value=explainer(instr);
+			instr=input.nextLine();
+		}
+		//所有参数储存完毕，进入计算模式
+		//除了 取值需要在函数空间取 以及两个特殊的操作output 和 stop 其他都用原来的函数即可
+		//需要传递参数指针funwordlist
+		//funcexp(instr, funwordlist)
+		//借用主函数的explainer 改写explainer 加入output和stop 并且把MUA的point改成func的
+		Word[] listtemp=MUA.wordlist;
+		int pointtemp=MUA.point;
+		MUA.wordlist=funcwordlist;
+		MUA.point=point+1;
+		explainer(oplist);
+		//最后把主函数的换回来
+		MUA.wordlist=listtemp;
+		MUA.point=pointtemp;
+		
+		return null;
 	}
 	//乘法 输入待乘内容
 	private String mul(String instr) {
@@ -624,6 +817,7 @@ class Reader{
 	 *		list1为参数列表
 	 *		list2为操作列表
 	 */
+	//函数和变量放一起
 	private String make(String instr) {
 		//创建一个新的word变量
 		Word newword = new Word();
@@ -710,6 +904,7 @@ class Reader{
 	//判断word是否存在于命名空间
 	private String isname(String instr) {
 		if(instr.charAt(0)!='"') isname(explainer(instr));
+		//if(instr.indexOf(' ')<0) {
 		else if(MUA.point>0){
 			for(int i=0;i<=MUA.point-1;i++) {
 				if(MUA.wordlist[i].name.equals(instr.substring(1))&&MUA.wordlist[i].value!=null) {
